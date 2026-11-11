@@ -1,0 +1,91 @@
+// Avistar Dashboard · av-charts.js — vanilla runtime for dot-matrix rings + orbs.
+// Usage: <script src="orb.js"></script><script src="av-charts.js"></script> then AvCharts.hydrate(document)
+// Ring:  <canvas data-av-ring data-values="[64,36]" data-colors='["#FF4B1F","var(--av-border-strong-02)"]' data-grad></canvas>
+// Orb:   <canvas data-av-orb="critical|high|medium|low|hub"></canvas>
+// Tabs:  any .av-tabs (not --vertical) gets a ⋯ overflow menu when its tabs don't fit.
+(function () {
+  const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+  const resolve = (el, c) => { const m = /^var\((--[^)]+)\)$/.exec(c); return m ? getComputedStyle(el).getPropertyValue(m[1]).trim() || '#3A3A40' : c; };
+  function drawRing(el, values, colors, opt) {
+    opt = opt || {}; const sweep = opt.sweep == null ? 1 : opt.sweep, hi = opt.hi;
+    const d = Math.min(2, devicePixelRatio || 1), W = Math.round(el.clientWidth * d), H = Math.round(el.clientHeight * d); if (!W || !H) return;
+    if (el.width !== W || el.height !== H) { el.width = W; el.height = H; }
+    const ctx = el.getContext('2d'); ctx.clearRect(0, 0, W, H);
+    const cols = colors.map(c => resolve(el, c)), n = values.length, tot = values.reduce((a, b) => a + b, 0) || 1, cum = []; let acc = 0;
+    values.forEach(v => { cum.push(acc); acc += v / tot; });
+    const cx = W / 2, cy = H / 2, ro = Math.min(W, H) * .48, ri = ro * .6, cell = Math.max(3 * d, Math.round(W / 56)), gap = .014;
+    for (let y = 0; y < H; y += cell) for (let x = 0; x < W; x += cell) {
+      const dx = x + cell / 2 - cx, dy = y + cell / 2 - cy, r = Math.hypot(dx, dy); if (r < ri || r > ro) continue;
+      let a = (Math.atan2(dy, dx) + Math.PI / 2) / (Math.PI * 2); if (a < 0) a += 1; if (a > sweep) continue;
+      let s = -1; for (let i = n - 1; i >= 0; i--) if (a >= cum[i]) { s = i; break; } if (s < 0 || values[s] <= 0) continue;
+      const st = cum[s], en = s < n - 1 ? cum[s + 1] : 1; if (a < st + gap / 2 || a > en - gap / 2) continue;
+      const m = 1 - Math.abs((r - (ri + ro) / 2) / ((ro - ri) / 2)), lit = .35 + .65 * (m * .6 + (.5 + .5 * Math.cos((a - .15) * Math.PI * 2)) * .4);
+      let col = cols[s]; if (opt.grad && s === 0) { const t = Math.min(1, (a - st) / Math.max(.001, en - st)), A = [31, 221, 255], Z = [255, 75, 31]; col = 'rgb(' + A.map((c, i) => Math.round(c + (Z[i] - c) * t)).join(',') + ')'; }
+      const th = BAYER[((x / cell | 0) % 4) * 4 + ((y / cell | 0) % 4)] / 16, on = lit > th, trk = opt.grad && s === 1, sz = trk ? cell * .62 : on ? cell * .82 : cell * .38, dim = hi != null && hi !== s ? .22 : 1;
+      ctx.fillStyle = col; ctx.globalAlpha = trk ? .85 : (on ? .95 : .5) * dim; ctx.fillRect(x + (cell - sz) / 2, y + (cell - sz) / 2, sz, sz);
+    }
+    ctx.globalAlpha = 1;
+  }
+  function animateRing(el) {
+    const values = JSON.parse(el.dataset.values || '[1]'), colors = JSON.parse(el.dataset.colors || '["#FF4B1F"]'), grad = el.hasAttribute('data-grad');
+    const hi = el.dataset.hi != null ? +el.dataset.hi : undefined, t0 = performance.now(), D = 1100;
+    const step = now => { el._avDrawn = true; const q = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - q, 3); drawRing(el, values, colors, { grad, hi, sweep: e }); if (q < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+    setTimeout(() => { if (!el._avDrawn) drawRing(el, values, colors, { grad, hi, sweep: 1 }); }, 120);
+  }
+  const ORB = { critical: ['#FF4B1F', '#FFD9C8', '#2A0904'], high: ['#FF5A2A', '#BFF6FF', '#1E0B06'], medium: ['#1FDDFF', '#E8FCFF', '#03222B'], low: ['#1FDDFF', '#E8FCFF', '#03222B'], hub: ['#FF4B1F', '#9FEFFF', '#141414'] };
+  function mountOrb(el) {
+    const cols = ORB[el.dataset.avOrb] || ORB.medium, ph = Math.random() * 6;
+    const go = () => { if (!el.isConnected) return; if (!window.AvistarOrb) return setTimeout(go, 80); try { el._avOrb = window.AvistarOrb.create(el, () => ({ activity: .12 + .1 * Math.sin(performance.now() / 700 + ph), colors: cols, speed: .9, animated: true })); } catch (e) {} };
+    go();
+  }
+  const DOTS = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="19" cy="12" r="1.8"></circle></svg>';
+  // Tabs priority+: tabs that don't fit collapse into a ⋯ menu; selected tab stays visible.
+  function fitTabs(t) {
+    const tabs = [...t.querySelectorAll(':scope>.av-tab')]; let more = t.querySelector(':scope>.av-tabs__more');
+    if (!more) {
+      more = document.createElement('div'); more.className = 'av-tabs__more';
+      more.innerHTML = '<button class="av-tab av-tabs__more-btn" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="More tabs">' + DOTS + '</button><div class="av-tabs__menu" role="menu" hidden></div>';
+      t.appendChild(more); const btn = more.firstChild, menu = more.lastChild;
+      const close = () => { menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
+      btn.onclick = e => { e.stopPropagation(); const o = menu.hidden; menu.hidden = !o; btn.setAttribute('aria-expanded', String(o)); };
+      document.addEventListener('click', e => { if (!more.contains(e.target)) close(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+      t.addEventListener('click', e => { const b = e.target.closest('.av-tab'); if (!b || b === btn || b.disabled || b.parentElement !== t) return; tabs.forEach(x => x.setAttribute('aria-selected', x === b ? 'true' : 'false')); fitTabs(t); });
+    }
+    const menu = more.lastChild; tabs.forEach(x => x.hidden = false); more.hidden = true; t.style.overflowX = ''; menu.innerHTML = '';
+    if (t.scrollWidth <= t.clientWidth + 1) return;
+    more.hidden = false; t.style.overflowX = 'visible';
+    const gap = parseFloat(getComputedStyle(t).columnGap) || 0, avail = t.clientWidth - more.offsetWidth - gap - 8;
+    const sel = tabs.find(x => x.getAttribute('aria-selected') === 'true'); let used = sel ? sel.offsetWidth + gap : 0, full = false; const hid = [];
+    tabs.forEach(x => { if (x === sel) return; const w = x.offsetWidth + gap; if (!full && used + w <= avail) used += w; else { full = true; hid.push(x); } });
+    hid.forEach(x => { x.hidden = true; const m = document.createElement('button'); m.type = 'button'; m.className = 'av-menu__item'; m.setAttribute('role', 'menuitem'); m.innerHTML = x.innerHTML; m.disabled = x.disabled; m.onclick = () => { x.click(); }; menu.appendChild(m); });
+  }
+  function hydrate(root) {
+    (root || document).querySelectorAll('.av-tabs:not(.av-tabs--vertical):not([data-av-done])').forEach(t => { t.setAttribute('data-av-done', ''); fitTabs(t); if (window.ResizeObserver) { let w = 0; new ResizeObserver(() => { if (t.clientWidth !== w) { w = t.clientWidth; fitTabs(t); } }).observe(t); } });
+    (root || document).querySelectorAll('canvas[data-av-ring]:not([data-av-done])').forEach(el => { el.setAttribute('data-av-done', ''); animateRing(el); });
+    (root || document).querySelectorAll('canvas[data-av-orb]:not([data-av-done])').forEach(el => { el.setAttribute('data-av-done', ''); mountOrb(el); });
+  }
+  function redraw(root) { (root || document).querySelectorAll('canvas[data-av-ring]').forEach(el => drawRing(el, JSON.parse(el.dataset.values), JSON.parse(el.dataset.colors), { grad: el.hasAttribute('data-grad'), hi: el.dataset.hi != null ? +el.dataset.hi : undefined })); }
+  window.AvCharts = { drawRing, hydrate, redraw, mountOrb, fitTabs };
+})();
+
+// Report preview fit: zoom .av-repview__frame content to the frame width (load + resize).
+(function () {
+  function fitOne(f) { try { const doc = f.contentDocument; if (!doc || !doc.documentElement) return; const de = doc.documentElement; de.style.zoom = 1; const sw = Math.max(de.scrollWidth, doc.body ? doc.body.scrollWidth : 0); const z = sw ? Math.min(1, (f.clientWidth - 2) / sw) : 1; de.style.zoom = z; de.style.overflowX = 'hidden'; } catch (e) {} }
+  function bind(f) { if (f.__avFit) return; f.__avFit = 1; f.addEventListener('load', () => { fitOne(f); setTimeout(() => fitOne(f), 400); setTimeout(() => fitOne(f), 1200); }); if (f.contentDocument && f.contentDocument.readyState === 'complete') fitOne(f); }
+  function scan() { document.querySelectorAll('iframe.av-repview__frame').forEach(bind); }
+  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
+  let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => document.querySelectorAll('iframe.av-repview__frame').forEach(fitOne), 120); });
+  if (document.readyState !== 'loading') scan(); else document.addEventListener('DOMContentLoaded', scan);
+})();
+
+// Hero scene fit (Help guide / story banners): crop the iso SVG to its bbox and fill the frame.
+(function () {
+  const SEL = '.av-gd__media iframe,.av-gd-step__m iframe,.av-story__m iframe';
+  function fit(f) { try { const d = f.contentDocument, svg = d && d.querySelector('svg'); if (!svg || svg.__avFit) return; svg.__avFit = 1; const st = d.createElement('style'); st.textContent = ':root{color-scheme:normal!important}html,body{height:100%!important;margin:0!important;padding:0!important;overflow:hidden!important;min-height:0!important;background:transparent!important;background-color:transparent!important}body{display:flex!important;align-items:center!important;justify-content:center!important}body>*:not(svg):not(style):not(script){display:none!important}'; d.head.appendChild(st); const g = svg.querySelector('.grid'); if (g) g.style.display = 'none'; let b; try { b = svg.getBBox(); } catch (x) {} if (b && b.width) { const p = Math.max(b.width, b.height) * .04; svg.setAttribute('viewBox', (b.x - p) + ' ' + (b.y - p) + ' ' + (b.width + 2 * p) + ' ' + (b.height + 2 * p)); } svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); svg.style.cssText += ';width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;transform:none!important'; } catch (x) {} }
+  function bind(f) { if (f.__avHero) return; f.__avHero = 1; f.addEventListener('load', () => { fit(f); setTimeout(() => fit(f), 300); }); if (f.contentDocument && f.contentDocument.readyState === 'complete') fit(f); }
+  function scan() { document.querySelectorAll(SEL).forEach(bind); }
+  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
+  if (document.readyState !== 'loading') scan(); else document.addEventListener('DOMContentLoaded', scan);
+})();
