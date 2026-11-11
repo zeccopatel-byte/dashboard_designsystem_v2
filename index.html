@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script src="orb-cube.js"></script>
+<script src="ds/av-charts.js"></script>
+<script src="ds/av-lib.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0B0B0C;--c0:#0F0F11;--c1:#121214;--c2:#141416;--c3:#18181B;--b0:#1E1E21;--b1:#232326;--b3:#2A2A2E;--b4:#3A3A40;--t4:#5A5955;--t3:#7A7874;--t2:#A3A19C;--t1:#D9D7D2;--t0:#F2F2F0;--ion:#1FDDFF;--cta:#FF4B1F;--hdr:rgba(11,11,12,.86);color-scheme:dark}:root[data-theme="light"]{--bg:#F4F2EE;--c0:#FFFFFF;--c1:#FAF9F7;--c2:#F3F1ED;--c3:#EDEBE7;--b0:#E6E4E0;--b1:#DFDDD9;--b3:#D4D2CE;--b4:#BDBBB7;--t4:#6E6C68;--t3:#5E5D59;--t2:#454440;--t1:#2A2A2C;--t0:#141414;--ion:#006A82;--cta:#141414;--hdr:rgba(244,242,238,.86);color-scheme:light}html,body{margin:0;background:var(--bg);color:var(--t0);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}*{box-sizing:border-box}a{color:var(--t0)}a:hover{color:var(--ion)}input,button{font:inherit}img{max-width:100%}::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--b0);border-radius:10px}</style>
+</helmet>
+<template id="__bundler_thumbnail" data-bg-color="#0B0B0C"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="tg" x1="0" x2="1"><stop offset="0" stop-color="#FF4B1F"></stop><stop offset="1" stop-color="#1FDDFF"></stop></linearGradient></defs><rect width="100" height="100" fill="#0B0B0C"></rect><rect x="30" y="30" width="18" height="18" rx="4" fill="url(#tg)"></rect><rect x="52" y="30" width="18" height="18" rx="4" fill="#2A2A2E"></rect><rect x="30" y="52" width="18" height="18" rx="4" fill="#2A2A2E"></rect><rect x="52" y="52" width="18" height="18" rx="4" fill="url(#tg)"></rect></svg></template>
+<div style="min-height:100vh;min-height:100dvh;display:flex;flex-direction:{{ shellDir }};background:var(--bg);color:var(--t0)">
+
+<sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+  <header style="position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:8px;min-height:56px;padding:6px clamp(1rem,4vw,2rem);border-bottom:1px solid var(--b0);background:var(--hdr);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)">
+    <button onClick="{{ openNav }}" aria-label="Open menu" aria-expanded="{{ navOpen }}" style="width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--b0);background:var(--c0);color:var(--t0);cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+    <span style="flex:1;min-width:0;display:flex;align-items:center;gap:8px"><img src="assets/mark-shape2.svg" alt="Avistar" style="width:24px;height:22px;flex-shrink:0"><span style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ page.label }}</span></span>
+    <button onClick="{{ toggleTheme }}" aria-label="{{ themeLabel }}" style="width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--b0);background:var(--c0);color:var(--t2);cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></button>
+  </header>
+</sc-if>
+<sc-if value="{{ scrim }}" hint-placeholder-val="{{ false }}"><div onClick="{{ closeNav }}" style="position:fixed;inset:0;z-index:55;background:rgba(0,0,0,.5)"></div></sc-if>
+
+<aside style="position:{{ sb.pos }};top:0;left:0;z-index:60;width:{{ sb.w }};flex-shrink:0;height:100vh;height:100dvh;display:flex;flex-direction:column;border-right:1px solid var(--b0);background:var(--bg);transform:{{ sb.tf }};box-shadow:{{ sb.sh }};transition:transform .28s cubic-bezier(.3,.7,.4,1)">
+  <div style="display:flex;align-items:center;gap:10px;min-height:64px;padding:0 12px 0 20px;border-bottom:1px solid var(--b0);flex-shrink:0"><img src="assets/mark-shape2.svg" alt="Avistar" style="width:26px;height:23px;display:block;flex-shrink:0"><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:600;letter-spacing:-0.01em">Avistar Dashboard</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--t3)">DESIGN SYSTEM · v2.3</span></span><sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}"><button onClick="{{ closeNav }}" aria-label="Close menu" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:0;border-radius:10px;background:transparent;color:var(--t2);cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></sc-if></div>
+  <div style="padding:12px 12px 4px;flex-shrink:0"><input value="{{ q }}" onInput="{{ onQ }}" placeholder="Filter…" aria-label="Filter pages" style="width:100%;height:44px;padding:0 12px;border-radius:10px;border:1px solid var(--b3);background:var(--c1);color:var(--t0);font-size:14px;outline:none"></div>
+  <nav style="flex:1;overflow-y:auto;overscroll-behavior:contain;padding:4px 12px 40px">
+    <sc-for list="{{ nav }}" as="g" hint-placeholder-count="5">
+      <button onClick="{{ g.toggle }}" aria-expanded="{{ g.open }}" style="display:flex;align-items:center;gap:10px;width:100%;min-height:44px;margin-top:6px;padding:0 10px;border:0;background:transparent;color:var(--t3);font-size:12px;font-weight:600;cursor:pointer;text-align:left"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="{{ g.ic }}"></path></svg><span style="flex:1">{{ g.label }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:400;color:var(--t4)">{{ g.count }}</span></button>
+      <sc-if value="{{ g.open }}" hint-placeholder-val="{{ true }}">
+        <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="6"><button onClick="{{ it.go }}" aria-current="{{ it.cur }}" style="display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin-bottom:2px;padding:0 10px 0 36px;border:0;border-radius:10px;background:{{ it.bg }};box-shadow:{{ it.sh }};color:{{ it.fg }};font-size:13px;font-weight:{{ it.fw }};cursor:pointer;text-align:left" style-hover="background:var(--c2);color:var(--t0)"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ it.label }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t4)">{{ it.count }}</span></button></sc-for>
+      </sc-if>
+    </sc-for>
+  </nav>
+  <div style="display:flex;flex-direction:column;gap:2px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--b0);flex-shrink:0">
+    <button onClick="{{ dlTokens }}" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:var(--t2);font-size:13px;cursor:pointer;text-align:left" style-hover="background:var(--c2);color:var(--t0)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 20h14"></path></svg>tokens.css</button>
+    <button onClick="{{ dlComponents }}" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:var(--t2);font-size:13px;cursor:pointer;text-align:left" style-hover="background:var(--c2);color:var(--t0)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 20h14"></path></svg>components.css</button>
+    <button onClick="{{ dlCharts }}" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:var(--t2);font-size:13px;cursor:pointer;text-align:left" style-hover="background:var(--c2);color:var(--t0)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 20h14"></path></svg>av-charts.js</button>
+    <button onClick="{{ toggleTheme }}" style="display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:var(--t2);font-size:13px;cursor:pointer;text-align:left" style-hover="background:var(--c2);color:var(--t0)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>{{ themeLabel }}</button>
+  </div>
+</aside>
+
+<main style="flex:1;min-width:0;width:100%;max-width:1180px;margin:0 auto;padding:clamp(1.25rem,4vw,2.5rem) clamp(1rem,4vw,3rem) clamp(4rem,10vw,7.5rem);display:flex;flex-direction:column;gap:clamp(1.25rem,3vw,2rem)">
+  <header style="display:flex;flex-direction:column;gap:clamp(.5rem,1.5vw,.75rem);padding-bottom:clamp(1.25rem,3vw,1.75rem);border-bottom:1px solid var(--b0)">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3)">{{ page.group }} · {{ page.count }}</span>
+    <h1 style="margin:0;font-size:clamp(28px,6vw,48px);font-weight:600;letter-spacing:-0.04em;line-height:1.02;overflow-wrap:anywhere">{{ page.label }}</h1>
+    <p style="margin:0;max-width:70ch;font-size:clamp(14px,1.6vw,15px);line-height:1.55;color:var(--t2);text-wrap:pretty">{{ page.desc }}</p>
+    <sc-if value="{{ hasVariants }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:6px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--t4)">PREVIEW WIDTH</span>
+        <div role="group" aria-label="Preview width" style="display:flex;flex-wrap:nowrap;max-width:100%;overflow-x:auto;scrollbar-width:none;gap:2px;padding:3px;border-radius:999px;border:1px solid var(--b3);background:var(--c1)"><sc-for list="{{ widths }}" as="w" hint-placeholder-count="5"><button onClick="{{ w.pick }}" aria-pressed="{{ w.on }}" style="min-width:44px;height:38px;padding:0 12px;border:0;border-radius:999px;background:{{ w.bg }};color:{{ w.fg }};font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer">{{ w.label }}</button></sc-for></div>
+      </div>
+    </sc-if>
+  </header>
+
+  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:var(--t3)">Loading library…</div></sc-if>
+
+  <sc-if value="{{ isTokens }}" hint-placeholder-val="{{ false }}">
+    <div style="border:1px solid var(--b0);border-radius:16px;background:var(--c0);overflow:hidden">
+      <sc-if value="{{ wideTable }}" hint-placeholder-val="{{ true }}"><div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr);gap:16px;padding:12px 20px;border-bottom:1px solid var(--b0);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--t4)"><span>TOKEN</span><span>DARK</span><span>LIGHT</span><span>USAGE</span></div></sc-if>
+      <sc-for list="{{ tokens }}" as="t" hint-placeholder-count="8">
+        <div style="display:grid;grid-template-columns:{{ tokCols }};gap:10px 16px;align-items:center;padding:12px clamp(1rem,3vw,1.25rem);border-bottom:1px solid var(--b0)">
+          <button onClick="{{ t.copy }}" title="Copy var()" style="justify-self:start;min-height:44px;padding:0;border:0;background:transparent;color:var(--t0);font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;text-align:left;overflow-wrap:anywhere" style-hover="color:var(--ion)">{{ t.name }}<span style="margin-left:8px;color:var(--ion);font-size:10px">{{ t.copied }}</span></button>
+          <span style="display:flex;align-items:center;gap:10px;min-width:0"><span style="width:36px;height:28px;flex-shrink:0;border-radius:6px;border:1px solid #2A2A2E;background:#0B0B0C;position:relative;overflow:hidden"><span style="position:absolute;inset:0;background:{{ t.dark }}"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.dark }}</span></span>
+          <span style="display:flex;align-items:center;gap:10px;min-width:0"><span style="width:36px;height:28px;flex-shrink:0;border-radius:6px;border:1px solid #D4D2CE;background:#F4F2EE;position:relative;overflow:hidden"><span style="position:absolute;inset:0;background:{{ t.light }}"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.light }}</span></span>
+          <span style="font-size:13px;color:var(--t2)">{{ t.use }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-for list="{{ variants }}" as="v" hint-placeholder-count="0">
+    <section style="display:flex;flex-direction:column;min-width:0;border:1px solid var(--b0);border-radius:16px;overflow:hidden;background:var(--c0)">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:clamp(.75rem,2vw,.875rem) clamp(1rem,3vw,1.125rem);border-bottom:1px solid var(--b0)">
+        <span style="display:flex;flex-direction:column;gap:2px;flex:1 1 200px;min-width:0"><span style="font-size:15px;font-weight:600;letter-spacing:-0.01em">{{ v.name }}</span><sc-if value="{{ v.note }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;line-height:1.45;color:var(--t3)">{{ v.note }}</span></sc-if></span>
+        <span style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onClick="{{ v.toggle }}" style="min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--b3);background:transparent;color:var(--t1);font-size:12px;cursor:pointer;white-space:nowrap" style-hover="background:var(--c2)">{{ v.codeLbl }}</button>
+          <button onClick="{{ v.copy }}" style="display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border-radius:999px;border:0;background:var(--cta);color:#FFFFFF;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="filter:brightness(1.08)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9h11v11H9zM5 15H4V4h11v1"></path></svg>{{ v.copyLbl }}</button>
+        </span>
+      </div>
+      <div style="padding:clamp(1rem,4vw,2rem);background:var(--bg);overflow:auto">
+        <div style="width:100%;max-width:{{ pwMax }};margin:0 auto;outline:{{ pwOutline }};outline-offset:8px;transition:max-width .3s cubic-bezier(.3,.7,.4,1)">{{ v.preview }}</div>
+      </div>
+      <sc-if value="{{ v.showCode }}" hint-placeholder-val="{{ true }}"><pre style="margin:0;max-height:min(320px,50vh);overflow:auto;padding:16px clamp(1rem,3vw,1.125rem);border-top:1px solid var(--b0);background:var(--c1);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;color:var(--t1);white-space:pre;tab-size:2">{{ v.code }}</pre></sc-if>
+    </section>
+  </sc-for>
+
+  <sc-if value="{{ hasCss }}" hint-placeholder-val="{{ false }}">
+    <section style="display:flex;flex-direction:column;min-width:0;border:1px solid var(--b0);border-radius:16px;overflow:hidden;background:var(--c0)">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:clamp(.75rem,2vw,.875rem) clamp(1rem,3vw,1.125rem);border-bottom:1px solid var(--b0)"><span style="flex:1 1 200px;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">CSS</span><span style="font-size:12px;color:var(--t3)">Included in components.css — uses tokens.css variables only.</span></span><button onClick="{{ copyCss }}" style="display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--b3);background:transparent;color:var(--t0);font-size:12px;font-weight:500;cursor:pointer" style-hover="background:var(--c2)">{{ cssLbl }}</button></div>
+      <pre style="margin:0;max-height:min(420px,60vh);overflow:auto;padding:16px clamp(1rem,3vw,1.125rem);background:var(--c1);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;color:var(--t1);white-space:pre">{{ pageCss }}</pre>
+    </section>
+  </sc-if>
+
+  <nav style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding-top:12px">
+    <button onClick="{{ prev.go }}" style="display:{{ prev.d }};align-items:center;justify-content:center;gap:8px;line-height:1;min-height:44px;max-width:100%;padding:0 18px;border-radius:999px;border:1px solid var(--b3);background:transparent;color:var(--t0);font-size:13px;cursor:pointer;white-space:nowrap" style-hover="background:var(--c2)">← {{ prev.label }}</button><span style="flex:1"></span>
+    <button onClick="{{ next.go }}" style="display:{{ next.d }};align-items:center;justify-content:center;gap:8px;line-height:1;min-height:44px;max-width:100%;padding:0 18px;border-radius:999px;border:1px solid var(--b3);background:transparent;color:var(--t0);font-size:13px;cursor:pointer;white-space:nowrap" style-hover="background:var(--c2)">{{ next.label }} →</button>
+  </nav>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;'dark'|'light'&quot;}}">
+class Component extends DCLogic {
+  state = { lib: null, page: localStorage.getItem('avds2-page') || 'overview', light: false, q: '', closed: {}, hide: {}, copied: null, w: window.innerWidth, navOpen: false, pw: 'fill' };
+  async componentDidMount() {
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    this.onKey = e => { if (e.key === 'Escape' && this.state.navOpen) this.setState({ navOpen: false }); };
+    window.addEventListener('resize', this.onResize); window.addEventListener('keydown', this.onKey);
+    while (!window.AvDS) await new Promise(r => setTimeout(r, 40));
+    const { T, C, P, K, S } = window.AvDS;
+    const LEGACY = new Set(['charts','kpi','posture-score','fix-list','findings-tree','story-banner','org-row','intro-frame','kpi-cards','code-snippet','date-picker','file-uploader','number-input','password-input','slider','structured-list','text-area','toggletip','progress-indicator','pagination','accordion','tile','checkbox','radio-button','loading']);
+    const groups0 = [
+      { label: 'Foundations', pages: P.FOUNDATIONS.map(p => ({ ...p, group: 'Foundations' })) },
+      { label: 'Color tokens', pages: [...new Set(T.COLOR_TOKENS.map(t => t[0]))].map(c => ({ id: 'tok-' + c.toLowerCase(), label: c, group: 'Color tokens', kind: 'tokens', cat: c, desc: c + ' tokens. Tap a token to copy var(). Light values apply under [data-theme="light"].' })) },
+      { label: 'Components', pages: C.COMPONENTS.map(p => ({ ...p, group: 'Components' })).sort((a, b) => a.label.localeCompare(b.label)) },
+      { label: 'Dashboard patterns', pages: P.PATTERNS.map(p => ({ ...p, group: 'Dashboard patterns' })) },
+      { label: 'Cards & graphs', pages: K.CARDS.map(p => ({ ...p, group: 'Cards & graphs' })) },
+      { label: 'Dashboard screens', pages: ((S && S.SCREENS) || []).map(p => ({ ...p, group: 'Dashboard screens' })) },
+    ];
+    const groups = groups0.map(g => ({ ...g, pages: g.pages.filter(p => !LEGACY.has(p.id)) })).filter(g => g.pages.length);
+    const F = id => P.FOUNDATIONS.find(f => f.id === id).css;
+    const compCss = [C.BASE_CSS, ...groups.flatMap(g => g.pages).filter(p => p.css && p.group !== 'Foundations').map(p => `\n/* ── ${p.label} ── */\n${p.css}`), '\n/* ── Type ── */\n' + F('type'), '\n/* ── Effects ── */\n' + F('effects'), '\n' + P.RESPONSIVE_CSS].join('\n');
+    const tokCss = T.tokensCSS();
+    let el = document.getElementById('avds-lib'); if (!el) { el = document.createElement('style'); el.id = 'avds-lib'; document.head.appendChild(el); }
+    el.textContent = tokCss + '\n' + compCss + '\n' + P.DOC_CSS;
+    let charts = ''; try { charts = await (await fetch('ds/av-charts.js')).text(); } catch (e) {}
+    this.setState({ lib: { T, groups, compCss, tokCss, charts } });
+    this.applyTheme(); this.hydrate();
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); window.removeEventListener('keydown', this.onKey); }
+  componentDidUpdate() { this.applyTheme(); this.hydrate(); }
+  hydrate() { const run = () => { document.querySelectorAll('.av-js-indeterminate').forEach(e => e.indeterminate = true); window.AvCharts && window.AvCharts.hydrate(document); }; run(); setTimeout(run, 60); setTimeout(run, 400); }
+  applyTheme() { const l = (this.props.theme === 'light') !== this.state.light, t = l ? 'light' : 'dark'; if (document.documentElement.getAttribute('data-theme') !== t) { document.documentElement.setAttribute('data-theme', t); setTimeout(() => window.AvCharts && window.AvCharts.redraw(document), 30); } }
+  copy(text, key) { try { navigator.clipboard.writeText(text); } catch (e) {} this.setState({ copied: key }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ copied: null }), 1400); }
+  dl(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type || 'text/css' })); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); }
+  go(id) { localStorage.setItem('avds2-page', id); this.setState({ page: id, navOpen: false }); window.scrollTo(0, 0); }
+  renderVals() {
+    const S = this.state, L = S.lib, isL = (this.props.theme === 'light') !== S.light, narrow = S.w < 960;
+    const base = { q: S.q, onQ: e => this.setState({ q: e.target.value }), toggleTheme: () => this.setState({ light: !S.light }), themeLabel: isL ? 'Dark mode' : 'Light mode',
+      narrow, navOpen: S.navOpen, scrim: narrow && S.navOpen, shellDir: narrow ? 'column' : 'row',
+      openNav: () => this.setState({ navOpen: true }), closeNav: () => this.setState({ navOpen: false }),
+      sb: narrow ? { pos: 'fixed', w: 'min(300px, 86vw)', tf: S.navOpen ? 'none' : 'translateX(-105%)', sh: S.navOpen ? '-24px 0 60px rgba(0,0,0,.35)' : 'none' } : { pos: 'sticky', w: 'clamp(240px, 22vw, 272px)', tf: 'none', sh: 'none' },
+      wideTable: S.w >= 760, tokCols: S.w >= 760 ? 'minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr)' : 'repeat(auto-fit,minmax(min(100%,180px),1fr))' };
+    const PW = [['fill', 'Fill', 'none'], ['1280', '1280', '1280px'], ['768', '768', '768px'], ['375', '375', '375px'], ['320', '320', '320px']];
+    const pwCur = PW.find(p => p[0] === S.pw) || PW[0];
+    Object.assign(base, { pwMax: pwCur[2], pwOutline: S.pw === 'fill' ? 'none' : '1px dashed var(--b3)', widths: PW.map(([id, label]) => ({ label, on: S.pw === id, pick: () => this.setState({ pw: id }), bg: S.pw === id ? 'var(--t0)' : 'transparent', fg: S.pw === id ? 'var(--bg)' : 'var(--t2)' })) });
+    if (!L) return { ...base, loading: true, nav: [], page: { group: 'Foundations', label: 'Dashboard design system', desc: '', count: '' }, variants: [], tokens: [], isTokens: false, hasVariants: false, hasCss: false, pageCss: '', cssLbl: '', copyCss: () => {}, prev: { d: 'none', label: '', go: () => {} }, next: { d: 'none', label: '', go: () => {} }, dlTokens: () => {}, dlComponents: () => {}, dlCharts: () => {} };
+    const all = L.groups.flatMap(g => g.pages);
+    const cnt = p => p.kind === 'tokens' ? L.T.COLOR_TOKENS.filter(t => t[0] === p.cat).length : (p.variants || []).length;
+    const page = all.find(p => p.id === S.page) || all[0], idx = all.indexOf(page), q = S.q.trim().toLowerCase();
+    const GI = { 'Foundations': 'M12 3l9 5-9 5-9-5zM3 13l9 5 9-5', 'Color tokens': 'M12 21a9 9 0 1 1 9-9c0 2-1.5 3-3 3h-2a2 2 0 0 0-1 3.7A1.5 1.5 0 0 1 12 21zM7.5 11h.01M10 7.5h.01M14.5 7.5h.01', 'Components': 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z', 'Dashboard patterns': 'M3 4h18v16H3zM9 4v16M9 9h12', 'Cards & graphs': 'M4 20V10M10 20V4M16 20v-7M22 20H2', 'Dashboard screens': 'M3 5h18v14H3zM3 9h18M8 9v10' };
+    const nav = L.groups.map(g => { const items = g.pages.filter(p => !q || p.label.toLowerCase().includes(q)); const open = !S.closed[g.label] || !!q; return { label: g.label, ic: GI[g.label], count: g.pages.reduce((n, p) => n + cnt(p), 0), open, toggle: () => this.setState(s => ({ closed: { ...s.closed, [g.label]: !s.closed[g.label] } })), items: items.map(p => { const a = p.id === page.id; return { label: p.label, count: cnt(p), cur: a ? 'page' : 'false', go: () => this.go(p.id), bg: a ? 'linear-gradient(90deg,rgba(31,221,255,.12),rgba(31,221,255,.02))' : 'transparent', sh: a ? 'inset 0 0 0 1px rgba(31,221,255,.22)' : 'none', fg: a ? 'var(--t0)' : 'var(--t2)', fw: a ? 600 : 400 }; }) }; }).filter(g => g.items.length);
+    const variants = (page.variants || []).map((v, i) => { const key = page.id + i, code = (v.code || v.html).trim(), hidden = S.hide[key] != null ? S.hide[key] : narrow;
+      return { name: v.name, note: v.note || false, code, showCode: !hidden, codeLbl: hidden ? 'Show code' : 'Hide code', copyLbl: S.copied === key ? 'Copied' : 'Copy code', copy: () => this.copy(code, key), toggle: () => this.setState(s => ({ hide: { ...s.hide, [key]: !hidden } })),
+        preview: React.createElement('div', { key: key, className: 'av-root', dangerouslySetInnerHTML: { __html: v.html } }) }; });
+    const tokens = page.kind === 'tokens' ? L.T.COLOR_TOKENS.filter(t => t[0] === page.cat).map(t => ({ name: t[1], dark: t[2], light: t[3], use: t[4], copied: S.copied === t[1] ? 'copied' : '', copy: () => this.copy(`var(${t[1]})`, t[1]) })) : [];
+    const nb = p => p ? { label: p.label, go: () => this.go(p.id), d: 'inline-flex' } : { label: '', go: () => {}, d: 'none' };
+    return { ...base, loading: false, nav, variants, tokens, isTokens: page.kind === 'tokens', hasVariants: !!(page.variants || []).length,
+      page: { group: page.group, label: page.label, desc: page.desc, count: cnt(page) + (page.kind === 'tokens' ? ' tokens' : ' variants') },
+      hasCss: !!page.css, pageCss: page.css || '', cssLbl: S.copied === 'css' ? 'Copied' : 'Copy CSS', copyCss: () => this.copy(page.css, 'css'),
+      prev: nb(all[idx - 1]), next: nb(all[idx + 1]),
+      dlTokens: () => this.dl('tokens.css', L.tokCss), dlComponents: () => this.dl('components.css', L.compCss), dlCharts: () => this.dl('av-charts.js', L.charts, 'text/javascript') };
+  }
+}
+</script>
+</body>
+</html>
